@@ -371,7 +371,6 @@ cnpm i element-ui -S
 
 ## 项目展示
 
-# 登录页
 ![Image text](https://github.com/junjieruan/vue-express/blob/master/img-folder/login.png)
 
 
