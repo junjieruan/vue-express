@@ -123,7 +123,6 @@ cnpm i element-ui -S
 ## vue-router传参与接收参数：
 ``` bash
 # 列表页进入详情页，id作为参数：
-    //进入订单详情页
     orderDetail(row){
       this.$router.push({path:"/orderDetail/"+row.act_id});
     }
@@ -138,6 +137,74 @@ cnpm i element-ui -S
     created() {
       console.log(this.$route.params.id);
     }
+
+```
+
+## vue-router 多个路由地址绑定一个组件造成 created 不执行的解决方法：
+``` bash
+# 问题：给不同的路由复用了一个组件，打算在created()中判断路由传进来的参数从而调用不同的接口获取不同状态的订单的列表数据。问题：created只会执行一次，当点击了另一个路由的时候，created()不会再执行
+# 描述1：复用了OrderList组件，区别在于传进去的type参数值
+    {
+        path:'/orderEntry/:type',
+        component:OrderList
+    }
+# 描述2：主菜单选项选择后跳转到列表页组件：
+   //订单列表-本组待办
+    groupWait() {
+      this.$router.push({ path: "/orderEntry/groupWait" });
+    },
+    //订单列表-我的待办
+    personWait() {
+      this.$router.push({ path: "/orderEntry/personWait" });
+    }
+   
+# 问题症结：created()只会执行一次，切换路由时不会重复执行
+  created() {
+    if(this.$route.params.type=="groupWait"){
+      this.getOrderList("groupWait");
+    }else if(this.$route.params.type=="personWait"){
+      this.getOrderList("personWait");
+    }
+  }
+  
+# 解决：用watch选项监听传过来的参数的变化，然后调相应的方法：
+# watch解决了复用同一个组件之间的路由跳转，但是其他组件跳过来还是不能实现，还是要加上created()
+  created() {
+    if(this.$route.params.type=="groupWait"){
+      this.getOrderList("groupWait");
+    }else if(this.$route.params.type=="personWait"){
+      this.getOrderList("personWait");
+    }else if(this.$route.params.type=="personFinish"){
+      this.getOrderList("personFinish");
+    }else if(this.$route.params.type=="allOrder"){
+      this.getAllOrder();
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      console.log(this.getStatus(this.$route.params))
+    }
+  },
+  methods: {
+    getStatus(params){
+      if(params.type=="groupWait"){
+        this.getOrderList("groupWait");
+      }else if(params.type=="personWait"){
+        this.getOrderList("personWait");
+      }else if(params.type == "personFinish"){
+        this.getOrderList("personFinish");
+      }else if(params.type == "allOrder"){
+        this.getAllOrder();
+      }
+    },
+    //获取订单列表
+    getOrderList(listType){
+      
+      this.$http.get("/api/order/getList?type="+listType).then((response)=>{
+        ... 
+      }
+    }
+  }
 
 ```
 
