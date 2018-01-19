@@ -69,13 +69,174 @@ cnpm install -g vue-cli
 # 执行vue init webpack my-project新建了一个基于webpack的vue项目my-project
 vue init webpack my-project
 
+# 安装 vue-resource依赖,先在package.json中对应地方添加,然后执行cnpm install
+  "dependencies": {
+      "vue": "^2.1.0",
+      "vue-router": "^2.0.3",
+      "vue-resource": "^1.0.3"
+  }
+  
 # 进入my-project，执行cnpm install安装依赖；执行npm run dev进行开发调试
 cnpm install
 npm run dev
+ ```
+## 添加Express服务端目录
+``` bash
+# 在项目根文件夹下创建一个server文件夹。然后里面创建下面三个文件：
+
+# db.js----用来添加mysql配置
+  // 数据库连接配置
+  module.exports = {
+      mysql: {
+          host: 'localhost',
+          user: 'root',
+          password: '',
+          database: 'test',
+          port: '3306'
+      }
+  }
+
+# index.js----Express服务器入口文件
+  // node 后端服务器
+
+  const userApi = require('./api/userApi');
+  const fs = require('fs');
+  const path = require('path');
+  const bodyParser = require('body-parser');
+  const express = require('express');
+  const app = express();
+
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({extended: false}));
+
+  // 后端api路由
+  app.use('/api/user', userApi);
+
+  // 监听端口
+  app.listen(3000);
+  console.log('success listen at port:3000......');
+
+# sqlMap.js----SQL语句映射文件，以供api逻辑调用
+  // sql语句
+  var sqlMap = {
+      // 用户
+      user: {
+          add: 'insert into user(id, name, age) values (0, ?, ?)'
+      }
+  }
+
+# api/userApi.js ---- 测试用api示例
+  var models = require('../db');
+  var express = require('express');
+  var router = express.Router();
+  var mysql = require('mysql');
+  var $sql = require('../sqlMap');
+
+  // 连接数据库
+  var conn = mysql.createConnection(models.mysql);
+
+  conn.connect();
+  var jsonWrite = function(res, ret) {
+      if(typeof ret === 'undefined') {
+          res.json({
+              code: '1',
+              msg: '操作失败'
+          });
+      } else {
+          res.json(ret);
+      }
+  };
+
+  // 增加用户接口
+  router.post('/addUser', (req, res) => {
+      var sql = $sql.user.add;
+      var params = req.body;
+      console.log(params);
+      conn.query(sql, [params.username, params.age], function(err, result) {
+          if (err) {
+              console.log(err);
+          }
+          if (result) {
+              jsonWrite(res, result);
+          }
+      })
+  });
+
+  module.exports = router;
+
+# 在项目根目录下安装依赖cnpm install express mysql body-parser;
+cnpm install express mysql body-parser;
+
+# 在server文件夹下执行node index
+node index
 
 # 安装流程参考
 参考：https://segmentfault.com/a/1190000008176208
 
+```
+## 编写vue测试文件
+``` bash
+
+# 这里只是为了测试，所以直接在vue-cli生成的Hello.vue中编写即可
+  <template>
+    <div class="hello">
+      <h1>{{ msg }}</h1>
+      <form>
+        <input type="text" name="username" v-model="userName"> <br>
+        <input type="text" name="age" v-model="age"> <br>
+        <a href="javascript:;" @click="addUser">提交</a>
+      </form>
+    </div>
+  </template>
+
+  <script>
+  export default {
+    name: 'hello',
+    data () {
+      return {
+        msg: 'Welcome to Your Vue.js App',
+        userName: '',
+        age: ''
+      }
+    },
+    methods: {
+      addUser() {
+        var name = this.userName;
+        var age = this.age;
+        this.$http.post('/api/user/addUser', {
+          username: name,
+          age: age
+        },{}).then((response) => {
+          console.log(response);
+        })
+      }
+    }
+  }
+  </script>
+```
+
+## 设置代理与跨域
+```bash
+
+# vue-cli的config文件中有一个proxyTable参数，用来设置地址映射表，可以添加到开发时配置（dev）中
+# 即请求/api时就代表http://127.0.0.1:3000/api/(这里要写ip，不要写localhost)
+  dev: {
+      // ...
+      proxyTable: {
+          '/api': {
+              target: 'http://127.0.0.1:3000/api/',
+              changeOrigin: true,
+              pathRewrite: {
+                  '^/api': ''
+              }
+          }
+      },
+      // ...
+  }
+```
+
+## 问题汇总
+```bash
 # 问题1：在server文件夹下执行node index时出错，cannot find module 'xxx'。
 # 解决：删除node_modules下的所有文件夹，重新执行cnpm install 和cnpm install express mysql body-parser都执行一下
 cnpm install
