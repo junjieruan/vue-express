@@ -370,21 +370,19 @@ cnpm i element-ui -S
 ```
 
 ## 项目展示
-``` bash
 
-# 登录页
 ![Image text](https://github.com/junjieruan/vue-express/img-folder/login.png)
 
-# 首页
+
 ![Image text](https://github.com/junjieruan/vue-express/img-folder/index.png)
 
-# 详情页
+
 ![Image text](https://github.com/junjieruan/vue-express/img-folder/detail.png)
 
-# 数据库user表
+
 ![Image text](https://github.com/junjieruan/vue-express/img-folder/user.png)
 
-# 数据库order_detail表
+
 ![Image text](https://github.com/junjieruan/vue-express/img-folder/order_detail.png)
-```
+
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
