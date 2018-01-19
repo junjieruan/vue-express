@@ -374,15 +374,15 @@ cnpm i element-ui -S
 ![Image text](https://github.com/junjieruan/vue-express/blob/master/img-folder/login.png)
 
 
-![Image text](https://github.com/junjieruan/vue-express/img-folder/index.png)
+![Image text](https://github.com/junjieruan/vue-express/blob/master/img-folder/index.png)
 
 
-![Image text](https://github.com/junjieruan/vue-express/img-folder/detail.png)
+![Image text](https://github.com/junjieruan/vue-express/blob/master/img-folder/detail.png)
 
 
-![Image text](https://github.com/junjieruan/vue-express/img-folder/user.png)
+![Image text](https://github.com/junjieruan/vue-express/blob/master/img-folder/user.png)
 
 
-![Image text](https://github.com/junjieruan/vue-express/img-folder/order_detail.png)
+![Image text](https://github.com/junjieruan/vue-express/blob/master/img-folder/order_detail.png)
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
